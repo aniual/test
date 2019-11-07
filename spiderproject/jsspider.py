@@ -51,6 +51,7 @@ class JdSpider:
             print(err)
 
         self.driver.get(url)
+        # 通过id进行分析出来key值。
         keyInput = self.driver.find_element_by_id('key')
         keyInput.send_keys(key)
         keyInput.send_keys(Keys.ENTER)
