@@ -8,12 +8,16 @@ import os
 import datetime
 from selenium.webdriver.common.keys import Keys
 import time
+import ssl
 
 class JdSpider:
     headers = {
         'User-Agent':'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; InfoPath.3; .NET4.0C; .NET4.0E'
     }
     imagePath='download'
+    # 添加ssl，否则会报错
+    context = ssl._create_unverified_context()
+
 
     # 数据库表创建
     def startUp(self,url,key):
@@ -91,20 +95,22 @@ class JdSpider:
         if src1:
             try:
                 req = urllib.request.Request(src1,headers=JdSpider.headers)
-                resp = urllib.request.urlopen(req,timeout=400)
+                # 将ssl传入
+                resp = urllib.request.urlopen(req,timeout=400, context=JdSpider.context)
                 data = resp.read()
             except:
                 pass
         if not data and src2:
             try:
                 req = urllib.request.Request(src2, headers=JdSpider.headers)
-                resp = urllib.request.urlopen(req, timeout=400)
+                resp = urllib.request.urlopen(req,timeout=400, context=JdSpider.context)
                 data = resp.read()
             except:
                 pass
 
         if data:
-            fobj = open(JdSpider.imagePath + '\\'+mFile,'wb',enconding='utf-8')
+            # win系统上使用"\\",linux系统使用"//"，要不然会报错
+            fobj = open(JdSpider.imagePath + '//'+mFile,'wb')
             fobj.write(data)
             fobj.close()
             print('download',mFile)
@@ -145,7 +151,7 @@ class JdSpider:
                     no = '0' + no
                 print(no, mark, price)
                 if src1:
-                    src1 = urllib.request.urljoin(self.driver.current_url,src1)
+                    src1 = urllib.request.urljoin(self.driver.current_url, src1)
                     p = src1.rfind('.')
                     mFile = no + src1[p:]
                 elif src2:
@@ -153,7 +159,7 @@ class JdSpider:
                     p = src2.rfind('.')
                     mFile = no + src2[p:]
                 if src1 or src2:
-                    T = threading.Thread(target=self.download,args=(src1,src2,mFile))
+                    T = threading.Thread(target=self.download,args=(src1, src2, mFile))
                     T.setDaemon(False)
                     T.start()
                     self.threads.append(T)
