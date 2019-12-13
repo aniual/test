@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('fetch') {
       steps {
-        git(url: 'git@github.com:aniual/test.git', branch: 'origin')
+        git(url: 'git@github.com:aniual/test.git', branch: 'master')
       }
     }
 
