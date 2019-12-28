@@ -1,1 +1,1 @@
-查看是否可以自动化的部署项目。
+test jenkins auto 
